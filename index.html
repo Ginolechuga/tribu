@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="icon" href="data:,">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Control de Alumnos</title>
 
-  <!-- ✅ SDK de Backendless -->
-  <script src="https://cdn.jsdelivr.net/npm/backendless@7.0.6/dist/backendless.min.js"></script>
-
+  <!-- SDK de Backendless -->
+  <script src="https://cdn.backendless.com/sdk/js/latest/backendless.min.js"></script>
 
   <script>
     const APP_ID = "A1FE9350-3CAD-48A9-BBE5-19EF0CEF5BE8";
     const API_KEY = "AF976F02-197A-4B98-B5B9-DB2C5C22C36B";
 
     window.addEventListener("DOMContentLoaded", () => {
-      Backendless.initApp(APP_ID, API_KEY);
-      console.log("✅ Conectado a Backendless");
-      cargarAlumnos(); // Cargar lista de alumnos al inicio
+      try {
+        Backendless.initApp(APP_ID, API_KEY);
+        console.log("✅ Conectado a Backendless");
+      } catch (e) {
+        console.error("❌ Error al conectar Backendless:", e);
+      }
     });
 
-    // 🔹 Registrar Alumno
     async function registrarAlumno() {
       const alumno = {
         nombre: document.getElementById("nombre").value,
@@ -34,13 +34,11 @@
       try {
         await Backendless.Data.of("Alumnos").save(alumno);
         alert("✅ Alumno registrado correctamente");
-        cargarAlumnos(); // Refresca la lista
       } catch (err) {
         alert("❌ Error al registrar: " + err.message);
       }
     }
 
-    // 🔹 Registrar Evento
     async function registrarEvento() {
       const evento = {
         nombre: document.getElementById("evento-nombre").value,
@@ -54,7 +52,27 @@
         alert("❌ Error al guardar evento: " + err.message);
       }
     }
+  </script>
+</head>
+<body>
+  <h1>📋 Registro de Alumnos</h1>
+  <div>
+    <input id="nombre" placeholder="Nombre completo" /><br />
+    <label><input type="checkbox" id="bautizado" /> Bautizado</label><br />
+    <input type="number" id="edad" placeholder="Edad" /><br />
+    <input id="telefono" placeholder="Teléfono" /><br />
+    <input id="cargo" placeholder="Cargo en iglesia" /><br />
+    <label><input type="checkbox" id="visita" /> Es visita</label><br />
+    <button onclick="registrarAlumno()">Registrar alumno</button>
+  </div>
 
-    // 🔹 Registrar Asistencia
-    async function registrarAsistencia() {
-      const alumnoId = document.getElementById("
+  <hr />
+
+  <h2>📅 Registrar Evento</h2>
+  <div>
+    <input id="evento-nombre" placeholder="Nombre del evento" />
+    <input type="date" id="evento-fecha" />
+    <button onclick="registrarEvento()">Guardar evento</button>
+  </div>
+</body>
+</html>
