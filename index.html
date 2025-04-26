@@ -180,7 +180,13 @@
         where: `alumnoId.objectId = '${alumnoId}'`,
         sortBy: ["fecha DESC"]
       });
+      const queryBuilder = Backendless.DataQueryBuilder.create()
+        .setWhereClause(`alumnoId.objectId = '${alumnoId}'`)
+        .setSortBy(["fecha DESC"]);
 
+      const historial = await Backendless.Data.of("Asistencia").find(queryBuilder);
+
+      console.log("🔍 Registros encontrados:", historial);
       historial.forEach(registro => {
         const fila = document.createElement("tr");
         fila.innerHTML = `
