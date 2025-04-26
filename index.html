@@ -163,19 +163,28 @@
     }
   }
 
-  async function mostrarHistorial() {
-    const alumnoId = document.getElementById("historial-select").value;
-    const tabla = document.querySelector("#tabla-historial tbody");
-    tabla.innerHTML = "";
+ async function mostrarHistorial() {
+  const alumnoId = document.getElementById("historial-select").value;
+  const tabla = document.querySelector("#tabla-historial tbody");
+  tabla.innerHTML = ""; // Limpiar la tabla antes de mostrar los nuevos registros
 
-    try {
-      const queryBuilder = Backendless.DataQueryBuilder.create()
-        .setWhereClause(`alumnoId.objectId = '${alumnoId}'`)
-        .setSortBy(["fecha DESC"]);
+  try {
+    const queryBuilder = Backendless.DataQueryBuilder.create()
+      .setWhereClause(`alumnoId.objectId = '${alumnoId}'`) // Filtrar por el alumno seleccionado
+      .setSortBy(["fecha DESC"]); // Ordenar por fecha descendente
 
-      const historial = await Backendless.Data.of("Asistencia").find(queryBuilder);
+    // Obtener los registros de asistencia
+    const historial = await Backendless.Data.of("Asistencia").find(queryBuilder);
 
-      console.log("🔍 Registros encontrados:", historial);
+    console.log("🔍 Registros encontrados:", historial);
+
+    // Verificar si no hay registros de asistencia
+    if (historial.length === 0) {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `<td colspan="4">No hay registros de asistencia para este alumno</td>`;
+      tabla.appendChild(fila);
+    } else {
+      // Si hay registros, mostrarlos en la tabla
       historial.forEach(registro => {
         const fila = document.createElement("tr");
         fila.innerHTML = `
@@ -186,12 +195,12 @@
         `;
         tabla.appendChild(fila);
       });
-
-    } catch (err) {
-      alert("❌ Error al obtener historial: " + err.message);
     }
-  }
 
+  } catch (err) {
+    alert("❌ Error al obtener historial: " + err.message);
+  }
+}
   // Cargar lista del historial también al inicio
   window.addEventListener("DOMContentLoaded", cargarAlumnosHistorial);
 </script>
