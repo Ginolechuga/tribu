@@ -171,10 +171,6 @@
     tabla.innerHTML = "";
 
     try {
-      const historial = await Backendless.Data.of("Asistencia").find({
-        where: `alumnoId.objectId = '${alumnoId}'`,
-        sortBy: ["fecha DESC"]
-      });
       const queryBuilder = Backendless.DataQueryBuilder.create()
         .setWhereClause(`alumnoId.objectId = '${alumnoId}'`)
         .setSortBy(["fecha DESC"]);
