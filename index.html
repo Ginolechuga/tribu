@@ -69,5 +69,71 @@
     <input type="date" id="evento-fecha" />
     <button onclick="registrarEvento()">Guardar evento</button>
   </div>
+  <hr />
+<h2>📝 Registrar Asistencia</h2>
+<div>
+  <label for="alumno-select">Selecciona alumno:</label>
+  <select id="alumno-select"></select><br><br>
+
+  <label for="asistencia-dia">Día:</label>
+  <select id="asistencia-dia">
+    <option value="jueves">Jueves</option>
+    <option value="sábado">Sábado</option>
+  </select><br><br>
+
+  <label for="asistencia-fecha">Fecha:</label>
+  <input type="date" id="asistencia-fecha"><br><br>
+
+  <label><input type="checkbox" id="asistio" /> Asistió</label><br>
+  <label><input type="checkbox" id="estudio" /> Estudió</label><br><br>
+
+  <button onclick="registrarAsistencia()">Guardar asistencia</button>
+</div>
+
+<script>
+  // 🔄 Cargar alumnos en el dropdown
+  async function cargarAlumnos() {
+    try {
+      const alumnos = await Backendless.Data.of("Alumnos").find();
+      const select = document.getElementById("alumno-select");
+      alumnos.forEach(alumno => {
+        const option = document.createElement("option");
+        option.value = alumno.objectId;
+        option.textContent = alumno.nombre;
+        select.appendChild(option);
+      });
+    } catch (err) {
+      alert("❌ Error al cargar alumnos: " + err.message);
+    }
+  }
+
+  // 📝 Guardar asistencia
+  async function registrarAsistencia() {
+    const asistencia = {
+      alumnoId: {
+        __meta: {
+          relation: true,
+          type: "Alumnos",
+          objectId: document.getElementById("alumno-select").value
+        }
+      },
+      fecha: document.getElementById("asistencia-fecha").value,
+      dia: document.getElementById("asistencia-dia").value,
+      asistio: document.getElementById("asistio").checked,
+      estudio: document.getElementById("estudio").checked,
+    };
+
+    try {
+      await Backendless.Data.of("Asistencia").save(asistencia);
+      alert("✅ Asistencia registrada");
+    } catch (err) {
+      alert("❌ Error al guardar asistencia: " + err.message);
+    }
+  }
+
+  // Cargar lista al iniciar
+  window.addEventListener("DOMContentLoaded", cargarAlumnos);
+</script>
+
 </body>
 </html>
