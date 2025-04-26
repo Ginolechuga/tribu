@@ -134,6 +134,72 @@
   // Cargar lista al iniciar
   window.addEventListener("DOMContentLoaded", cargarAlumnos);
 </script>
+  <hr />
+<h2>📄 Historial de Asistencia</h2>
+<div>
+  <label for="historial-select">Selecciona alumno:</label>
+  <select id="historial-select"></select>
+  <button onclick="mostrarHistorial()">Ver historial</button>
+</div>
+
+<table border="1" id="tabla-historial" style="margin-top: 10px;">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Día</th>
+      <th>Asistió</th>
+      <th>Estudió</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+  async function cargarAlumnosHistorial() {
+    try {
+      const alumnos = await Backendless.Data.of("Alumnos").find();
+      const select = document.getElementById("historial-select");
+      alumnos.forEach(alumno => {
+        const option = document.createElement("option");
+        option.value = alumno.objectId;
+        option.textContent = alumno.nombre;
+        select.appendChild(option);
+      });
+    } catch (err) {
+      alert("❌ Error al cargar alumnos: " + err.message);
+    }
+  }
+
+  async function mostrarHistorial() {
+    const alumnoId = document.getElementById("historial-select").value;
+    const tabla = document.querySelector("#tabla-historial tbody");
+    tabla.innerHTML = "";
+
+    try {
+      const historial = await Backendless.Data.of("Asistencia").find({
+        where: `alumnoId.objectId = '${alumnoId}'`,
+        sortBy: ["fecha DESC"]
+      });
+
+      historial.forEach(registro => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${registro.fecha}</td>
+          <td>${registro.dia}</td>
+          <td>${registro.asistio ? "✅" : "❌"}</td>
+          <td>${registro.estudio ? "📖" : "❌"}</td>
+        `;
+        tabla.appendChild(fila);
+      });
+
+    } catch (err) {
+      alert("❌ Error al obtener historial: " + err.message);
+    }
+  }
+
+  // Cargar lista del historial también al inicio
+  window.addEventListener("DOMContentLoaded", cargarAlumnosHistorial);
+</script>
 
 </body>
 </html>
