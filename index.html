@@ -164,31 +164,40 @@
   }
 
  async function mostrarHistorial() {
-  const alumnoId = document.getElementById("historial-select").value;
+  const alumnoSelect = document.getElementById("historial-select");
+  const alumnoId = alumnoSelect.value;
+  const alumnoNombre = alumnoSelect.options[alumnoSelect.selectedIndex].text;
+
   const tabla = document.querySelector("#tabla-historial tbody");
-  tabla.innerHTML = ""; // Limpiar la tabla antes de mostrar los nuevos registros
+  tabla.innerHTML = "";
+
+  // Crear o actualizar encabezado del historial
+  let encabezado = document.getElementById("encabezado-historial");
+  if (!encabezado) {
+    encabezado = document.createElement("h3");
+    encabezado.id = "encabezado-historial";
+    document.querySelector("div").insertBefore(encabezado, document.querySelector("#tabla-historial"));
+  }
+  encabezado.textContent = `Historial de: ${alumnoNombre}`;
 
   try {
     const queryBuilder = Backendless.DataQueryBuilder.create()
-      .setWhereClause(`alumnoId = '${alumnoId}'`) // Filtrar por el alumno seleccionado
-      .setSortBy(["fecha DESC"]); // Ordenar por fecha descendente
+      .setWhereClause(`alumnoId.objectId = '${alumnoId}'`)
+      .setSortBy(["fecha DESC"]);
 
-    // Obtener los registros de asistencia
     const historial = await Backendless.Data.of("Asistencia").find(queryBuilder);
 
     console.log("🔍 Registros encontrados:", historial);
 
-    // Verificar si no hay registros de asistencia
     if (historial.length === 0) {
       const fila = document.createElement("tr");
       fila.innerHTML = `<td colspan="4">No hay registros de asistencia para este alumno</td>`;
       tabla.appendChild(fila);
     } else {
-      // Si hay registros, mostrarlos en la tabla
       historial.forEach(registro => {
         const fila = document.createElement("tr");
         fila.innerHTML = `
-          <td>${registro.fecha}</td>
+          <td>${registro.fecha?.split("T")[0]}</td>
           <td>${registro.dia}</td>
           <td>${registro.asistio ? "✅" : "❌"}</td>
           <td>${registro.estudio ? "📖" : "❌"}</td>
