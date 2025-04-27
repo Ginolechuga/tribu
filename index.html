@@ -173,11 +173,14 @@
 
   // Crear o actualizar encabezado del historial
   let encabezado = document.getElementById("encabezado-historial");
-  if (!encabezado) {
-    encabezado = document.createElement("h3");
-    encabezado.id = "encabezado-historial";
-    document.querySelector("div").insertBefore(encabezado, document.querySelector("#tabla-historial"));
-  }
+if (!encabezado) {
+  encabezado = document.createElement("h3");
+  encabezado.id = "encabezado-historial";
+
+  const tablaHistorial = document.getElementById("tabla-historial");
+  tablaHistorial.parentNode.insertBefore(encabezado, tablaHistorial);
+}
+
   encabezado.textContent = `Historial de: ${alumnoNombre}`;
 
   try {
