@@ -110,7 +110,7 @@
   // 📝 Guardar asistencia
   async function registrarAsistencia() {
     const asistencia = {
-  alumnoId: { objectId: document.getElementById("alumno-select").value },
+  alumnoId: document.getElementById("alumno-select").value,
   fecha: document.getElementById("asistencia-fecha").value,
   dia: document.getElementById("asistencia-dia").value,
   asistio: document.getElementById("asistio").checked,
@@ -170,7 +170,7 @@
 
   try {
     const queryBuilder = Backendless.DataQueryBuilder.create()
-      .setWhereClause(`alumnoId.objectId = '${alumnoId}'`) // Filtrar por el alumno seleccionado
+      .setWhereClause(`alumnoId = '${alumnoId}'`) // Filtrar por el alumno seleccionado
       .setSortBy(["fecha DESC"]); // Ordenar por fecha descendente
 
     // Obtener los registros de asistencia
